@@ -1,0 +1,26 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+#video-container {
+  margin: 20px auto;
+  display: flex;
+  justify-content: center;
+}
+
+#result-container {
+  margin: 20px auto;
+  text-align: center;
+}
+
+#result-text {
+  font-size: 18px;
+  font-weight: bold;
+  color: red;
+}
