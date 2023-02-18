@@ -1,26 +1,38 @@
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
+form {
+  max-width: 400px;
+  margin: 50px auto;
   padding: 20px;
+  background-color: #f2f2f2;
+  border-radius: 5px;
 }
 
-h1 {
+h2 {
   text-align: center;
 }
 
-#video-container {
-  margin: 20px auto;
-  display: flex;
-  justify-content: center;
+label {
+  display: block;
+  margin-bottom: 5px;
 }
 
-#result-container {
-  margin: 20px auto;
-  text-align: center;
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 5px;
 }
 
-#result-text {
-  font-size: 18px;
-  font-weight: bold;
-  color: red;
+input[type="button"] {
+  background-color: #4CAF50;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+input[type="button"]:hover {
+  background-color: #3e8e41;
 }

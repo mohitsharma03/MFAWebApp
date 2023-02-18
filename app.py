@@ -1,12 +1,29 @@
-from flask import Flask, render_template, Response
+from flask import Flask, render_template,  request, Response
 import cv2
 import face_recognition
+#import dlib
 
 app = Flask(__name__)
 
-camera = cv2.VideoCapture(0)
+@app.route('/')
+def login():
+    return render_template('login.html')
+
+@app.route('/video_feed', methods=['POST'])
+def login_post():
+    username = request.form['username']
+    password = request.form['password']
+
+    # Replace the following code with your authentication logic
+    if username == 'admin' and password == 'password':
+        #return render_template('face.html')
+        return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    else:
+        return 'Incorrect username or password'
+
 
 def gen_frames():
+    camera = cv2.VideoCapture(0)
     while True:
         success, frame = camera.read()
         if not success:
@@ -22,13 +39,9 @@ def gen_frames():
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/video_feed')
-def video_feed():
-    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+#@app.route('/video_feed')
+#def video_feed():
+#   return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
