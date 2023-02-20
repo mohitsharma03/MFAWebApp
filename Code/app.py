@@ -7,6 +7,7 @@ from pipeline import Pipeline
 app = Flask(__name__)
 pipeLine = Pipeline()
 
+
 @app.route('/')
 def login():
     return render_template('login.html')
@@ -19,8 +20,8 @@ def login_post():
     # Replace the following code with your authentication logic
     if username == 'admin' and password == 'password':
         #return render_template('face.html')
-        #return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-        return pipeLine.runPipeline()
+        return Response(pipeLine.runPipeline(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
     else:
         #return redirect('/error', code=302)
         return redirect('/error')
