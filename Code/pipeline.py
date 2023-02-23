@@ -13,14 +13,22 @@ class Pipeline:
         self.diff = FrameDiff(0.92)
         self.detect = FaceDetect(0.50,"cpu")
         self.rec = FaceRecog(threshold = 0.2, metric = "cosine")
-
+        
     def runPipeline(self,video=0,source = "../Data/user.png"):
+
+        ###############################
         cap = cv2.VideoCapture(video)
+        ###############################
+
         user = cv2.resize(cv2.imread(source),(1000,1000))
+
+        ##################################
         ret, curr_frame = cap.read()
         prev_frame = cv2.resize(curr_frame,(600, 400))
         print("read first frame")
         ret, curr_frame = cap.read()
+        ###################################
+
         curr_frame = cv2.resize(curr_frame,(600, 400))
         frameCount = 2
         frameSkip = 10
@@ -53,7 +61,7 @@ class Pipeline:
                             print("face is verified", distance)
                             #antispoof
                             spoof_result = self.antiSpoof.predict_spoof(curr_frame)
-                            if spoof_result[0]==2:
+                            if spoof_result[1]>=0.999:
                                 print("face is Fake", spoof_result[1])
                                 cv2.putText(curr_frame, 'Spoofed Face Detected', (0,45), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
                                 file.write(outputStr.format("Spoofed Face Detected",frameCount,time.time()-start_time))
@@ -81,8 +89,10 @@ class Pipeline:
                 yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame+ b'\r\n')
                 frameCount+=frameSkip
                 cap.set(cv2.CAP_PROP_POS_FRAMES,frameCount)
+                ###########################################
                 prev_frame = curr_frame.copy()
                 ret, curr_frame = cap.read()
+                ###########################################
                 curr_frame = cv2.resize(curr_frame,(600,400))
                 
             except cv2.error:

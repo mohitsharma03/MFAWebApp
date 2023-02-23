@@ -16,10 +16,4 @@ class FaceDetect:
                 if i > self.confidence_threshold:
                     numFaces+=1
         return (numFaces, conf ,boxes)
-
-
-# fd = FaceDetect(0.50,"cpu")
-# img1 = cv2.imread("/home/siddharth/Downloads/images.jpeg")
-# img2 = cv2.imread("/home/siddharth/Downloads/face.jpeg")
-# print("1\n",fd.detect(img1))
-# print("2\n",fd.detect(img2))          
+ 
