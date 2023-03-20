@@ -15,28 +15,27 @@ class Pipeline:
         self.rec = FaceRecog(threshold = 0.2, metric = "cosine")
         self.user = cv2.resize(cv2.imread("../Data/user.png"),(1000,1000))
 
-    def pipeline2(self,prev,curr):
+    def pipeline2(self,prev,curr, flag):
         prev_frame = cv2.resize(prev,(600, 400))
         curr_frame = cv2.resize(curr,(600, 400))
-        frameCount = 2
-        noFaceCount = 0
-        multipleFaceCount = 0
-        unverifiedFaceCount = 0
-        spoofedFaceCount=0
-        outputStr = "{}, {}, {}\n"
-        #file = open("pipeline_output.txt","w")
-        start_time =time.time()
-        
+        retCode =  ""
+
+
         try:
             #frame_input_time = time.time()
+            print("flag ",flag)
             diff_val, diff_score = self.diff.ssim(prev_frame, curr_frame)
-            if diff_val:
-                cv2.putText(curr_frame, 'Frame Change', (0,15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
-                print("diff frame", diff_score)
+            if diff_val or flag == '1':
+                if diff_val:
+                    cv2.putText(curr_frame, 'Frame Change', (0,15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+                    #print("diff frame", diff_score)
+                if flag == '1': 
+                     cv2.putText(curr_frame, 'Error in Previous Frame. Present Correct Face or be Logged Out', (10,370),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
+                
                 numFaces, conf ,boxes = self.detect.detect(curr_frame)
 
                 if numFaces==1:
-                    print("1 face detected")
+                    #print("1 face detected")
                     (x,y,w,h) = boxes[0]
                     x, y, w, h = int(x), int(y), int(w), int(h)
                     text = f"{conf[0]*100:.2f}%"
@@ -45,40 +44,40 @@ class Pipeline:
                     isSame, distance = self.rec.verify(curr_frame,self.user)
                     if(isSame):
                         cv2.putText(curr_frame, 'Face Verified', (0,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
-                        print("face is verified", distance)
-                        #antispoof
+                        #print("face is verified", distance)
+                        #####antispoof
                         spoof_result = self.antiSpoof.predict_spoof(curr_frame)
                         if spoof_result[1]>=0.9999:
-                            print("face is Fake", spoof_result[1])
+                            #print("face is Fake", spoof_result[1])
                             cv2.putText(curr_frame, 'Spoofed Face Detected', (0,45), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
                             #file.write(outputStr.format("Spoofed Face Detected",frameCount,time.time()-start_time))
-                            spoofedFaceCount+=1
-
+                            retCode = "SPOOF"
+                        else:
+                            retCode = "VERIFIED"
                     else:
                         cv2.putText(curr_frame, 'Face Not Verified', (0,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
-                        print("face is not verified", distance)
+                        #print("face is not verified", distance)
                         #file.write(outputStr.format("Face Not Verified",frameCount,time.time()-start_time))
-                        unverifiedFaceCount+=1
+                        retCode = "NOTVERIFIED"
 
                     
                 elif numFaces==0:
-                    print("0 face detected")
+                    #print("0 face detected")
                     cv2.putText(curr_frame, 'No Faces', (0,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
                     #file.write(outputStr.format("No Faces Detected",frameCount,time.time()-start_time))
-                    noFaceCount+=1
+                    retCode = "NOFACES"
                 else:
-                    print("multiple faces detected")
+                    #print("multiple faces detected")
                     cv2.putText(curr_frame, 'Multiple Faces', (0,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
                     #file.write(outputStr.format("Multiple Faces Detected",frameCount,time.time()-start_time))
-                    multipleFaceCount+=1
+                    retCode = "MULTIPLEFACES"
 
             else:
-                print("No difference")
+                #print("No difference")
                 cv2.putText(curr_frame, 'No Frame Change', (0,15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
-            #cv2.imshow("frame",curr_frame)
             ret, buffer = cv2.imencode('.jpg', curr_frame)
             frame = buffer.tobytes()
-            return frame
+            return [frame, retCode]
             
         except cv2.error:
             print(cv2.error)

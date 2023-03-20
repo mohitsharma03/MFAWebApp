@@ -1,4 +1,4 @@
-from flask import Flask, render_template,  request, Response, redirect
+from flask import Flask, render_template,  request, Response, redirect, jsonify, make_response
 from flask_cors import CORS
 import cv2
 import numpy as np
@@ -24,9 +24,14 @@ def test_cam():
 def image_process():
     prev = data_uri_to_cv2_img(request.form["prev"])
     curr = data_uri_to_cv2_img(request.form["curr"])
-    ret = pipeLine.pipeline2(prev,curr)
-    ret = base64.b64encode(ret)
-    return Response(ret)
+    flag =  request.form["flag"]
+    res = pipeLine.pipeline2(prev,curr, flag)
+    img = base64.b64encode(res[0])
+    ret = {
+        "img": str(img),
+        "code": res[1]
+    }
+    return make_response(ret, 200)
 
 @app.route('/video_feed', methods=['POST'])
 def login_post():
