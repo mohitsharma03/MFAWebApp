@@ -9,13 +9,22 @@
 <br>
 <label for="hideVid">Hide video element: </label>
 <input id="hideVid" type="checkbox">
+<div style="display: flex">
 <video autoplay muted playsinline></video>
-<p>
+<img style="margin-left: 15px;" id="myImg" src = "">
+
+</div>
+<p id = "ErrorText">
 </p>
+<div>
+  <div>Offences</div>
+  <div>No Faces: <span id="NoFaces"></span></div>
+  <div>Multiple Faces: <span id="MultipleFaces"></span></div>
+  <div>Unverified Face: <span id="UnverifiedFace"></span></div>
+  <div>Spoof: <span id="Spoof"></span></div>
+</div>
 <br>
 <button id="stop" disabled>Stop</button>
-<img id="myImg" src = "">
-<div id="images"></div>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script>
 
@@ -29,24 +38,86 @@ if (typeof OffscreenCanvas === "undefined") {
   console.error(supportError);
 }
 
+const NoFaces = document.querySelector("span#NoFaces");
+const MultipleFaces = document.querySelector("span#MultipleFaces");
+const UnverifiedFace = document.querySelector("span#UnverifiedFace");
+const Spoof = document.querySelector("span#Spoof");
+var NFCount = 0;
+var MFCount = 0;
+var UVCount = 0;
+var SFCount = 0;
+var Flag =  0;
+
+const Limit = 30;
+
+NoFaces.innerHTML = NFCount.toString()
+MultipleFaces.innerHTML = MFCount.toString()
+UnverifiedFace.innerHTML = UVCount.toString()
+Spoof.innerHTML = SFCount.toString()
 
 const startBtn = document.querySelector("button#start");
 const stopBtn = document.querySelector("button#stop");
 const hideVid = document.querySelector("input#hideVid");
 const intervalSec = document.querySelector("input#interval");
 const videoElem = document.querySelector("video");
-const imagesDiv = document.querySelector("div#images");
 let storage = []; // Use this array as our database
 async function sendImagesToServer(prev,curr){
     $.post('http://localhost:5000/sendImages',
     {
         label: "input_images",
         prev: prev,
-        curr: curr
+        curr: curr,
+        flag: Flag
     },
     function(result) {   // success callback function
-        document.getElementById("myImg").src = 'data:image/jpeg;base64,' + result;
-        //console.log(result)
+        var img = result.img.slice(2,-1)
+        document.getElementById("myImg").src = 'data:image/jpeg;base64,' + img;
+        var code = result.code;
+        switch (code) {
+          case "NOFACES":
+            NFCount+=1;
+            NoFaces.innerHTML = NFCount.toString()
+            Flag = 1;
+            document.querySelector("p#ErrorText").innerHTML = "NO FACES"
+            break;
+          
+          case "MULTIPLEFACES":
+            MFCount += 1;
+            MultipleFaces.innerHTML = MFCount.toString()
+            Flag = 1;
+            document.querySelector("p#ErrorText").innerHTML = "MULTIPLE FACES"
+            break;
+          
+          case "NOTVERIFIED": 
+            UVCount += 1;
+            UnverifiedFace.innerHTML = UVCount.toString()
+            Flag = 1;
+            document.querySelector("p#ErrorText").innerHTML = "NOT VERIFIED"
+            break;
+          
+          case "SPOOF":
+            SFCount += 1;
+            Spoof.innerHTML = SFCount.toString()
+            Flag = 1;
+            document.querySelector("p#ErrorText").innerHTML = "SPOOFED FACE"
+            break;
+        
+          case "VERIFIED":
+            Flag = 0;
+            document.querySelector("p#ErrorText").innerHTML = "VERIFIED"
+            break;  
+
+          default:
+          document.querySelector("p#ErrorText").innerHTML = "NO CHANGE"
+            break;
+        }
+        if(NFCount + MFCount + SFCount  + UVCount > Limit){
+          clearInterval(captureInterval);
+          // close the camera
+          stream.getTracks().forEach((track) => track.stop());
+          document.querySelector("p#ErrorText").innerHTML = "ERRORS EXCEEDED, STOPPING FEED..."
+
+        }
     });
 
 }
@@ -75,7 +146,6 @@ startBtn.onclick = async () => {
     ctx.drawImage(videoElem, 0, 0);
     const dataUrl = canvas.toDataURL();
     storage.push(dataUrl);
-    
     if(storage.length==2){
         await showImages(storage)
         storage = [storage[1]]
