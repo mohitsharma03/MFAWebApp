@@ -15,7 +15,8 @@ UserImage  = None
 
 mysql_conn = mysql.connector.connect(
     host='localhost',
-    user='admin',
+    user='root',
+    #user='admin',
     password='mysql@123',
     database='mydatabase'
 )
@@ -36,7 +37,8 @@ def signup():
         
         # create a new user in the database
         cursor = mysql_conn.cursor()
-        query = "INSERT INTO users (name, email, password, image) VALUES (%s, %s, %s, %s)"
+        #query = "INSERT INTO users (name, email, password, image) VALUES (%s, %s, %s, %s)"
+        query = "INSERT INTO users (username, email, password, image) VALUES (%s, %s, %s, %s)"
         #values = (name, email, password, 'static/images/' + image.filename)
         #values = (name, email, password, '../Data/images/' + name +'.png')
         values = (name, email, password, '../Data/user.png')
@@ -81,7 +83,8 @@ def login_post():
 
         # check if the user exists in the database
         cur = mysql_conn.cursor(buffered=True)
-        cur.execute('SELECT * FROM users WHERE name = %s', [username])
+        #cur.execute('SELECT * FROM users WHERE name = %s', [username])
+        cur.execute('SELECT * FROM users WHERE username = %s', [username])
         user = cur.fetchone()
         cur.close()
         print(user)
@@ -90,14 +93,17 @@ def login_post():
         #return render_template('face.html')
         return Response(pipeLine.runPipeline(), mimetype='multipart/x-mixed-replace; boundary=frame')
         """
-        if username==user[1] and password==user[3]:
+        #if username==user[1] and password==user[3]:
+        if username==user[0] and password==user[2]:
             # if the username and password are correct, log the user in
             #session['user_id'] = user[0]
             #session['username'] = user[1]
-            global UserName
-            global UserImage
-            UserName = user[1]
-            UserImage = user[4]
+            #global UserName
+            #global UserImage
+            #UserName = user[1]
+            #UserImage = user[4]
+            #UserName = user[0]
+            #UserImage = user[3]
             # redirect the user to the home page
             return render_template('webcam.html')
 
@@ -119,4 +125,5 @@ def data_uri_to_cv2_img(uri):
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     return img
 if __name__ == '__main__':
-    app.run(debug=True)
+    #app.run(debug=True)
+    app.run(host='0.0.0.0',debug=True,port=5000)
