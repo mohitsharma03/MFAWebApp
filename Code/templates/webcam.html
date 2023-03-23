@@ -61,8 +61,10 @@ const hideVid = document.querySelector("input#hideVid");
 const intervalSec = document.querySelector("input#interval");
 const videoElem = document.querySelector("video");
 let storage = []; // Use this array as our database
+
+//console.log(url);
 async function sendImagesToServer(prev,curr){
-    $.post('http://localhost:5000/sendImages',
+    $.post('/sendImages',
     {
         label: "input_images",
         prev: prev,
