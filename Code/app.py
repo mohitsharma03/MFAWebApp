@@ -33,15 +33,17 @@ def signup():
         # save the image file to disk
         #image.save('static/images/' + image.filename)
         #image.save('../Data/images/' + name +'.png')
-        image.save('../Data/user.png')
+        filepath = '../Data/images/'+name+'.png'
+        image.save(filepath)
         
         # create a new user in the database
         cursor = mysql_conn.cursor()
         #query = "INSERT INTO users (name, email, password, image) VALUES (%s, %s, %s, %s)"
+       
         query = "INSERT INTO users (username, email, password, image) VALUES (%s, %s, %s, %s)"
         #values = (name, email, password, 'static/images/' + image.filename)
         #values = (name, email, password, '../Data/images/' + name +'.png')
-        values = (name, email, password, '../Data/user.png')
+        values = (name, email, password, filepath)
         cursor.execute(query, values)
         mysql_conn.commit()
         cursor.close()
@@ -66,7 +68,8 @@ def image_process():
     prev = data_uri_to_cv2_img(request.form["prev"])
     curr = data_uri_to_cv2_img(request.form["curr"])
     flag =  request.form["flag"]
-    res = pipeLine.pipeline2(prev,curr, flag)
+    user = request.form["user"]
+    res = pipeLine.pipeline2(prev,curr, flag, user)
     #res = pipeLine.pipeline2(prev,curr, flag, UserName, UserImage)
     img = base64.b64encode(res[0])
     ret = {
@@ -105,7 +108,7 @@ def login_post():
             #UserName = user[0]
             #UserImage = user[3]
             # redirect the user to the home page
-            return render_template('webcam.html')
+            return render_template('webcam.html', user = user)
 
         else:
             #return redirect('/error', code=302)
