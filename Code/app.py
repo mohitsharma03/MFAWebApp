@@ -3,13 +3,15 @@ from flask_cors import CORS
 import cv2
 import numpy as np
 import base64
+import os
 import mysql.connector
 from pipeline import Pipeline 
+from faceDetect import FaceDetect
 
 app = Flask(__name__)
 CORS(app)
 pipeLine = Pipeline()
-
+fd = FaceDetect(0.50,"cpu")
 UserName = None
 UserImage  = None
 
@@ -35,6 +37,9 @@ def signup():
         #image.save('../Data/images/' + name +'.png')
         filepath = '../Data/images/'+name+'.png'
         image.save(filepath)
+        if(process_profile_img(filepath) == False):
+            os.remove(filepath)
+            return '<div style="text-align:center;"> <p>Issue with Image Please upload an image with face!!</p><a href="/">Login</a></div>'
         
         # create a new user in the database
         cursor = mysql_conn.cursor()
@@ -127,6 +132,22 @@ def data_uri_to_cv2_img(uri):
     nparr = np.fromstring(base64.b64decode(encoded_data), np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     return img
+def process_profile_img(filepath):
+    img = cv2.imread(filepath)
+    height, width, c = img.shape
+    numFaces, conf ,boxes = fd.detect(img)
+    if(numFaces != 1):
+        return False
+    (x,y,w,h) = boxes[0]
+    x, y, w, h = int(x), int(y), int(w), int(h)
+    ymin = max(y-25,0)
+    hmax = min(h+30,height)
+    xmin = max(x-15,0)
+    wmax = min(w+15,width)
+    cv2.imwrite(filepath, cv2.resize(img[ymin:hmax,xmin:wmax],(180,250)))
+    return True
+
+
 if __name__ == '__main__':
     #app.run(debug=True)
     app.run(host='0.0.0.0',debug=True,port=5000)
