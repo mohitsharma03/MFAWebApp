@@ -12,13 +12,14 @@ class Pipeline:
         self.antiSpoof = Antispoof()
         self.diff = FrameDiff(0.92)
         self.detect = FaceDetect(0.50,"cpu")
-        self.rec = FaceRecog(threshold = 0.2, metric = "cosine")
+        self.rec = FaceRecog(threshold = 0.25, metric = "cosine")
         #self.user = cv2.resize(cv2.imread("../Data/user.png"),(1000,1000))
 
     def pipeline2(self,prev,curr, flag, user):
         prev_frame = cv2.resize(prev,(600, 400))
         curr_frame = cv2.resize(curr,(600, 400))
-        user = cv2.resize(cv2.imread(user),(1000,1000))
+        #user = cv2.resize(cv2.imread(user),(1000,1000))
+        user = cv2.imread(user)
         retCode =  ""
 
 
@@ -39,10 +40,15 @@ class Pipeline:
                     #print("1 face detected")
                     (x,y,w,h) = boxes[0]
                     x, y, w, h = int(x), int(y), int(w), int(h)
+                    curr= curr_frame.copy()
                     text = f"{conf[0]*100:.2f}%"
                     cv2.putText(curr_frame,text,(x, y - 20),cv2.FONT_HERSHEY_SIMPLEX,0.5,(0, 255, 0),1)
                     cv2.rectangle(curr_frame, (x, y), (w, h), (0, 255, 0), 1)
-                    isSame, distance = self.rec.verify(curr_frame,user)
+                    ymin = max(y-25,0)
+                    hmax = min(h+30,400)
+                    xmin = max(x-15,0)
+                    wmax = min(w+15,600)
+                    isSame, distance = self.rec.verify(curr[ymin:hmax,xmin:wmax],user)
                     if(isSame):
                         cv2.putText(curr_frame, 'Face Verified', (0,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
                         #print("face is verified", distance)
