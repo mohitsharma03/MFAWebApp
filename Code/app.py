@@ -21,7 +21,7 @@ mysql_conn = mysql.connector.connect(
     #user='root',
     user='admin',
     #password='mysql@123',
-    password='Ankitvk9'
+    password='Ankitvk9',
     database='mydatabase'
 )
 
