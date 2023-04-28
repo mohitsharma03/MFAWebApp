@@ -22,7 +22,8 @@ mysql_conn = mysql.connector.connect(
     user='admin',
     #password='mysql@123',
     password='Ankitvk9',
-    database='mydatabase'
+    #database='mydatabase'
+    database='myrds'
 )
 
 @app.route('/signup', methods=['GET', 'POST'])
