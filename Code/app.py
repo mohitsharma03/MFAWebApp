@@ -16,10 +16,12 @@ UserName = None
 UserImage  = None
 
 mysql_conn = mysql.connector.connect(
-    host='localhost',
-    user='root',
-    #user='admin',
-    password='mysql@123',
+    #host='localhost',
+    host='database-for-cmfa.cjhgwmq6l47c.ap-south-1.rds.amazonaws.com',
+    #user='root',
+    user='admin',
+    #password='mysql@123',
+    password='Ankitvk9'
     database='mydatabase'
 )
 
