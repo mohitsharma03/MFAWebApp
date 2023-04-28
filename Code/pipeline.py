@@ -12,7 +12,7 @@ class Pipeline:
         self.antiSpoof = Antispoof()
         self.diff = FrameDiff(0.92)
         self.detect = FaceDetect(0.50,"cpu")
-        self.rec = FaceRecog(threshold = 0.25, metric = "cosine")
+        self.rec = FaceRecog(threshold = 0.3, metric = "cosine")
         #self.user = cv2.resize(cv2.imread("../Data/user.png"),(1000,1000))
 
     def pipeline2(self,prev,curr, flag, user):
