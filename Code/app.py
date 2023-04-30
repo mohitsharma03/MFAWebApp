@@ -25,7 +25,7 @@ mysql_conn = mysql.connector.connect(
     #database='mydatabase'
     database='myrds'
 )
-
+'''
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -57,7 +57,43 @@ def signup():
         cursor.close()
         
         # render a success message to the user
-        return '<div style="text-align:center;"> <p>User created successfully!!</p><a href="/">Login</a></div>'
+        #return '<div style="text-align:center;"> <p>User created successfully!!</p><a href="/">Login</a></div>'
+        message = 'User created successfully!'
+        return render_template('message.html', message=message)
+    
+    # if the request method is GET, render the signup form
+    return render_template('signup.html')
+'''
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        # get the form data
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        image = request.files['image']
+        
+        # save the image file to disk
+        filepath = '../Data/images/'+name+'.png'
+        image.save(filepath)
+        if(process_profile_img(filepath) == False):
+            os.remove(filepath)
+            return render_template('message.html', message='Issue with Image Please upload an image with face!!')
+        
+        # create a new user in the database
+        cursor = mysql_conn.cursor()
+        query = "INSERT INTO users (username, email, password, image) VALUES (%s, %s, %s, %s)"
+        values = (name, email, password, filepath)
+        try:
+            cursor.execute(query, values)
+            mysql_conn.commit()
+            cursor.close()
+            return render_template('message.html', message='User created successfully!')
+        except:
+            mysql_conn.rollback()
+            cursor.close()
+            os.remove(filepath)
+            return render_template('message.html', message='Error creating user. Please try again.')
     
     # if the request method is GET, render the signup form
     return render_template('signup.html')
