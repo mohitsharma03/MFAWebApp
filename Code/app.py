@@ -173,7 +173,7 @@ def login_post():
         if user is None:
             # if the username doesn't exist in the database
             message = "Username does not exist"
-            return render_template('login.html', message=message)
+            return render_template('message.html', message=message)
 
         elif username==user[0] and password==user[2]:
             # if the username and password are correct, log the user in
@@ -182,7 +182,7 @@ def login_post():
         else:
             # if the password is incorrect
             message = "Incorrect password"
-            return render_template('login.html', message=message)
+            return render_template('message.html', message=message)
 
 @app.route('/error')
 def errorPg():
