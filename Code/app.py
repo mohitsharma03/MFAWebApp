@@ -85,7 +85,7 @@ def image_process():
         "code": res[1]
     }
     return make_response(ret, 200)
-
+'''
 @app.route('/video_feed', methods=['POST'])
 def login_post():
     if request.method == 'POST':
@@ -121,6 +121,28 @@ def login_post():
         else:
             #return redirect('/error', code=302)
             return redirect('/error')
+'''
+@app.route('/video_feed', methods=['POST'])
+def login_post():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        # check if the user exists in the database
+        cur = mysql_conn.cursor()
+        cur.execute('SELECT * FROM users WHERE username = %s', [username])
+        result = cur.fetchone()
+        if result:
+            if password == result[2]:
+                global UserName
+                global UserImage
+                UserName = result[0]
+                UserImage = result[3]
+                return render_template('webcam.html')
+        return redirect('/')
+    
+    cur.close() # Close the cursor to properly handle the result set
+    mysql_conn.close() # Close the database connection after using it
 
 @app.route('/error')
 def errorPg():
