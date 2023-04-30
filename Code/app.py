@@ -121,7 +121,7 @@ def image_process():
         "code": res[1]
     }
     return make_response(ret, 200)
-
+'''
 @app.route('/video_feed', methods=['POST'])
 def login_post():
     if request.method == 'POST':
@@ -165,21 +165,25 @@ def login_post():
         password = request.form['password']
 
         # check if the user exists in the database
-        cur = mysql_conn.cursor()
+        cur = mysql_conn.cursor(buffered=True)
         cur.execute('SELECT * FROM users WHERE username = %s', [username])
-        result = cur.fetchone()
-        if result:
-            if password == result[2]:
-                global UserName
-                global UserImage
-                UserName = result[0]
-                UserImage = result[3]
-                return render_template('webcam.html')
-        return redirect('/')
-    
-    cur.close() # Close the cursor to properly handle the result set
-    mysql_conn.close() # Close the database connection after using it
-'''
+        user = cur.fetchone()
+        cur.close()
+
+        if user is None:
+            # if the username doesn't exist in the database
+            message = "Username does not exist"
+            return render_template('login.html', message=message)
+
+        elif username==user[0] and password==user[2]:
+            # if the username and password are correct, log the user in
+            return render_template('webcam.html', user = user)
+
+        else:
+            # if the password is incorrect
+            message = "Incorrect password"
+            return render_template('login.html', message=message)
+
 @app.route('/error')
 def errorPg():
    return 'Incorrect username or pass'
