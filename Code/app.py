@@ -85,7 +85,7 @@ def image_process():
         "code": res[1]
     }
     return make_response(ret, 200)
-'''
+
 @app.route('/video_feed', methods=['POST'])
 def login_post():
     if request.method == 'POST':
@@ -143,7 +143,7 @@ def login_post():
     
     cur.close() # Close the cursor to properly handle the result set
     mysql_conn.close() # Close the database connection after using it
-
+'''
 @app.route('/error')
 def errorPg():
    return 'Incorrect username or pass'
