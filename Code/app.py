@@ -78,7 +78,8 @@ def signup():
         image.save(filepath)
         if(process_profile_img(filepath) == False):
             os.remove(filepath)
-            return render_template('message.html', message='Issue with Image Please upload an image with face!!')
+            #return render_template('message.html', message='Issue with Image Please upload an image with face!!')
+            return render_template('message.html', message='Issue with Image Please upload an image with face!!', buttonMessage='Sign up', urlMsg="/signup")
         
         # create a new user in the database
         cursor = mysql_conn.cursor()
@@ -88,12 +89,12 @@ def signup():
             cursor.execute(query, values)
             mysql_conn.commit()
             cursor.close()
-            return render_template('message.html', message='User created successfully!')
+            return render_template('message.html', message='User created successfully!', buttonMessage='Login', urlMsg="/")
         except:
             mysql_conn.rollback()
             cursor.close()
             os.remove(filepath)
-            return render_template('message.html', message='Error creating user. Please try again.')
+            return render_template('message.html', message='Error creating user. Please try again.', buttonMessage='Sign up', urlMsg="/signup")
     
     # if the request method is GET, render the signup form
     return render_template('signup.html')
@@ -173,7 +174,7 @@ def login_post():
         if user is None:
             # if the username doesn't exist in the database
             message = "Username does not exist"
-            return render_template('message.html', message=message)
+            return render_template('message.html', message=message, buttonMessage='Login', urlMsg="/")
 
         elif username==user[0] and password==user[2]:
             # if the username and password are correct, log the user in
@@ -182,7 +183,7 @@ def login_post():
         else:
             # if the password is incorrect
             message = "Incorrect password"
-            return render_template('message.html', message=message)
+            return render_template('message.html', message=message, buttonMessage='Login', urlMsg="/")
 
 @app.route('/error')
 def errorPg():
