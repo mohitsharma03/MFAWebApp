@@ -1,48 +1,67 @@
-/* center the form */
+/* Reset default styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Set body background color and font */
+body {
+  background-color: #f2f2f2;
+  font-family: Arial, sans-serif;
+}
+
+/* Set form styles */
 form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 400px;
+  margin: 80px auto 0;
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+  border: 1px solid #ccc;
 }
 
-/* style the input fields */
-input[type="text"], input[type="email"], input[type="password"] {
-  padding: 10px;
+/* Set form title styles */
+h2 {
+  text-align: center;
+  font-size: 36px;
+  margin-top: 0px;
+}
+
+/* Set label styles */
+label {
+  display: block;
   margin-bottom: 10px;
-  border-radius: 5px;
-  border: none;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  font-size: 18px;
+}
+
+/* Set input field styles */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="file"] {
   width: 100%;
-  max-width: 400px;
-}
-
-/* style the image upload button */
-.image-upload {
-  display: inline-block;
-  margin-bottom: 10px;
-  width: 200px;
-  height: 200px;
-  background-color: #f3f3f3;
-  background-size: cover;
-  background-position: center;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  overflow: hidden;
-}
-
-.image-upload input[type="file"] {
-  display: none;
-}
-
-/* style the submit button */
-input[type="submit"] {
   padding: 10px;
-  margin-top: 10px;
+  margin-bottom: 20px;
+  font-size: 18px;
+  border: 1px solid #ccc;
   border-radius: 5px;
+}
+
+/* Set submit button styles */
+input[type="submit"] {
+  width: 100%;
+  background-color: #4CAF50;
+  color: #ffffff;
+  padding: 10px;
+  font-size: 18px;
   border: none;
-  background-color: #4285f4;
-  color: white;
-  font-weight: bold;
+  border-radius: 5px;
   cursor: pointer;
+}
+
+/* Set submit button hover styles */
+input[type="submit"]:hover {
+  background-color: #3e8e41;
 }
