@@ -1,5 +1,23 @@
+{% if not session.logged_in %}
+  {% set message = "Please log in to access this page." %}
+  {% set buttonMessage = "Login" %}
+  {% set urlMsg = "/" %}
+  {% include 'message.html' %}
+{% else %}
+<!-- show the video feed here -->
+
 <!DOCTYPE html>
 <html>
+<style>
+    h1 {
+      text-align: center;
+    }
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+</style>
 <span class="error"></span>
 <br>
 <div style="display: flex">
@@ -161,5 +179,10 @@ window.onbeforeunload = function() {
 
 
 </script>
-
+  <h1>Welcome {{ session.username }}!</h1>
+    <form action="{{ url_for('logout') }}" method="post">
+        <input type="submit" value="Logout">
+    </form>
 </html>
+
+{% endif %}
