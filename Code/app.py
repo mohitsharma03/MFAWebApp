@@ -1,4 +1,4 @@
-from flask import Flask, render_template,  request, Response, redirect, jsonify, make_response
+from flask import Flask, render_template,  request, Response, redirect, jsonify, make_response, session
 from flask_cors import CORS
 import cv2
 import numpy as np
@@ -176,15 +176,23 @@ def login_post():
             message = "Username does not exist"
             return render_template('message.html', message=message, buttonMessage='Login', urlMsg="/")
 
-        elif username==user[0] and password==user[2]:
+        elif username == user[0] and password == user[2]:
             # if the username and password are correct, log the user in
-            return render_template('webcam.html', user = user)
+            session['logged_in'] = True
+            session['username'] = user[0]
+            return render_template('webcam.html', user=user)
 
         else:
             # if the password is incorrect
             message = "Incorrect password"
             return render_template('message.html', message=message, buttonMessage='Login', urlMsg="/")
-
+        
+@app.route('/logout', methods=['POST'])
+def logout():
+    # clear the session variables
+    session.clear()
+    return redirect('/')
+        
 @app.route('/error')
 def errorPg():
    return 'Incorrect username or pass'
