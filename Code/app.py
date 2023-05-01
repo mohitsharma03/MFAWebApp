@@ -8,7 +8,7 @@ import mysql.connector
 from pipeline import Pipeline 
 from faceDetect import FaceDetect
 
-from os import environ
+from os import environ, make_response
 
 app = Flask(__name__)
 app.secret_key = environ.get('FLASK_SECRET_KEY', 'default_secret_key')
@@ -28,6 +28,14 @@ mysql_conn = mysql.connector.connect(
     #database='mydatabase'
     database='myrds'
 )
+
+@app.after_request
+def set_cache_control(response):
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
 '''
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
