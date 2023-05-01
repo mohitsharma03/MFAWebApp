@@ -8,7 +8,7 @@ import mysql.connector
 from pipeline import Pipeline 
 from faceDetect import FaceDetect
 
-from os import environ, make_response
+from os import environ
 
 app = Flask(__name__)
 app.secret_key = environ.get('FLASK_SECRET_KEY', 'default_secret_key')
