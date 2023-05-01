@@ -31,7 +31,7 @@ mysql_conn = mysql.connector.connect(
 
 @app.before_request
 def before_request():
-    if request.path == '/video_feed':
+    if request.path == '/webcam.html':
         response = app.make_response('')
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
