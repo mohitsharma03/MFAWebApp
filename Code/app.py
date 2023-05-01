@@ -29,6 +29,7 @@ mysql_conn = mysql.connector.connect(
     database='myrds'
 )
 
+"""
 @app.before_request
 def before_request():
     if request.path == '/webcam.html':
@@ -44,6 +45,7 @@ def set_cache_control(response):
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
     return response
+"""
 
 '''
 @app.route('/signup', methods=['GET', 'POST'])
