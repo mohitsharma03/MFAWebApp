@@ -41,6 +41,10 @@
   <div>Spoof: <span id="Spoof"></span></div>
 </div>
 <br>
+    <h1>Welcome {{ session.username }}!</h1>
+    <form action="{{ url_for('logout') }}" method="post">
+        <input type="submit" value="Logout">
+    </form>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script>
 
@@ -185,10 +189,7 @@ window.onbeforeunload = function() {
 
 
 </script>
-  <h1>Welcome {{ session.username }}!</h1>
-    <form action="{{ url_for('logout') }}" method="post">
-        <input type="submit" value="Logout">
-    </form>
+
 </html>
 
 {% endif %}
