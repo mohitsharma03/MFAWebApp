@@ -8,7 +8,10 @@ import mysql.connector
 from pipeline import Pipeline 
 from faceDetect import FaceDetect
 
+from os import environ
+
 app = Flask(__name__)
+app.secret_key = environ.get('FLASK_SECRET_KEY', 'default_secret_key')
 CORS(app)
 pipeLine = Pipeline()
 fd = FaceDetect(0.50,"cpu")
