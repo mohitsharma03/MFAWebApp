@@ -7,7 +7,7 @@ import os
 import mysql.connector
 from pipeline import Pipeline 
 from faceDetect import FaceDetect
-
+import hashlib
 from os import environ
 
 app = Flask(__name__)
@@ -103,10 +103,13 @@ def signup():
             #return render_template('message.html', message='Issue with Image Please upload an image with face!!')
             return render_template('message.html', message='Issue with Image Please upload an image with face!!', buttonMessage='Sign up', urlMsg="/signup")
         
+        # hash the password using SHA-256
+        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+        
         # create a new user in the database
         cursor = mysql_conn.cursor()
         query = "INSERT INTO users (username, email, password, image) VALUES (%s, %s, %s, %s)"
-        values = (name, email, password, filepath)
+        values = (name, email, hashed_password, filepath)
         try:
             cursor.execute(query, values)
             mysql_conn.commit()
@@ -186,6 +189,9 @@ def login_post():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        
+        # hash the password entered by the user using SHA-256
+        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
 
         # check if the user exists in the database
         cur = mysql_conn.cursor(buffered=True)
@@ -198,7 +204,7 @@ def login_post():
             message = "Username does not exist"
             return render_template('message.html', message=message, buttonMessage='Login', urlMsg="/")
 
-        elif username == user[0] and password == user[2]:
+        elif username == user[0] and hashed_password == user[2]:
             # if the username and password are correct, log the user in
             session['logged_in'] = True
             session['username'] = user[0]
