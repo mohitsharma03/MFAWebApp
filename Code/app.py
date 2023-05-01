@@ -32,7 +32,7 @@ mysql_conn = mysql.connector.connect(
 @app.before_request
 def before_request():
     if request.path == '/video_feed':
-        response = app.make_response()
+        response = app.make_response('')
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'
